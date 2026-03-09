@@ -1,0 +1,1279 @@
+<!DOCTYPE html>
+<!-- saved from url=(0048)file:///Users/oguzakkus/Downloads/printfliw.html -->
+<html lang="de"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PrintFlow · digitaldruck-er</title>
+<link rel="preconnect" href="https://fonts.googleapis.com/">
+<link href="./PrintFlow · digitaldruck-er_files/css2" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --brand: #D4006A; --brand-dark: #A8004F; --brand-light: #FFF0F7;
+    --gray-50: #F9FAFB; --gray-100: #F3F4F6; --gray-200: #E5E7EB;
+    --gray-300: #D1D5DB; --gray-400: #9CA3AF; --gray-500: #6B7280;
+    --gray-700: #374151; --gray-900: #111827;
+    --font: 'IBM Plex Sans', sans-serif; --mono: 'IBM Plex Mono', monospace;
+  }
+  html, body { height: 100%; }
+  body { font-family: var(--font); background: #F4F5F7; color: var(--gray-900); font-size: 13px; line-height: 1.5; }
+  button { font-family: var(--font); cursor: pointer; }
+  input, select, textarea { font-family: var(--font); font-size: 13px; }
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-thumb { background: var(--gray-300); border-radius: 10px; }
+
+  /* LAYOUT */
+  #app { display: flex; min-height: 100vh; }
+  aside {
+    width: 210px; flex-shrink: 0; background: #fff;
+    border-right: 1px solid var(--gray-200);
+    position: fixed; top: 0; left: 0; height: 100vh;
+    display: flex; flex-direction: column; z-index: 20; overflow-y: auto;
+  }
+  #main { margin-left: 210px; flex: 1; display: flex; flex-direction: column; min-height: 100vh; }
+  header {
+    background: #fff; border-bottom: 1px solid var(--gray-200);
+    padding: 10px 22px; display: flex; align-items: center;
+    gap: 10px; position: sticky; top: 0; z-index: 10;
+  }
+  #content { padding: 20px 22px; flex: 1; }
+
+  /* SIDEBAR */
+  .logo-wrap { padding: 15px 16px; border-bottom: 1px solid var(--gray-100); display: flex; align-items: center; gap: 10px; }
+  .logo-icon { width: 32px; height: 32px; border-radius: 4px; background: var(--brand); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .logo-name { font-size: 13px; font-weight: 700; color: var(--gray-900); line-height: 1.2; }
+  .logo-sub  { font-size: 10px; color: var(--brand); font-weight: 600; letter-spacing: 0.02em; }
+  nav { padding: 8px; flex: 1; }
+  .nav-section { font-size: 9px; font-weight: 700; letter-spacing: 0.1em; color: var(--gray-400); padding: 6px 8px 4px; text-transform: uppercase; }
+  .nav-btn {
+    width: 100%; display: flex; align-items: center; gap: 8px;
+    padding: 7px 10px; border-radius: 4px; border: none;
+    background: transparent; color: var(--gray-700);
+    font-size: 13px; font-weight: 400; cursor: pointer; text-align: left; transition: background 0.1s;
+  }
+  .nav-btn:hover { background: var(--gray-100); }
+  .nav-btn.active { background: var(--brand-light); color: var(--brand); font-weight: 600; }
+  .nav-btn .badge {
+    margin-left: auto; border-radius: 20px; padding: 0 7px;
+    font-size: 10px; font-weight: 700; line-height: 17px;
+    background: var(--gray-100); color: var(--gray-500);
+  }
+  .nav-btn.active .badge { background: rgba(212,0,106,0.1); color: var(--brand); }
+  .nav-status-btn {
+    width: 100%; display: flex; align-items: center; gap: 7px;
+    padding: 6px 10px; border-radius: 4px; border: none;
+    background: transparent; color: var(--gray-700);
+    font-size: 12px; cursor: pointer; text-align: left; transition: background 0.1s;
+  }
+  .nav-status-btn:hover { background: var(--gray-100); }
+  .dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .nav-cnt { margin-left: auto; color: var(--gray-400); font-size: 11px; }
+  .sidebar-footer { padding: 10px 16px; border-top: 1px solid var(--gray-100); font-size: 10px; color: var(--gray-400); }
+
+  /* TOPBAR */
+  .search-wrap { position: relative; flex: 1; max-width: 360px; }
+  .search-wrap svg { position: absolute; left: 9px; top: 50%; transform: translateY(-50%); pointer-events: none; }
+  .search-input {
+    width: 100%; padding: 7px 10px 7px 30px;
+    border: 1px solid var(--gray-300); border-radius: 4px;
+    font-size: 13px; color: var(--gray-900); background: var(--gray-50); outline: none;
+  }
+  .search-input:focus { border-color: var(--brand); }
+  .topbar-select { font-size: 12px; border: 1px solid var(--gray-300); border-radius: 4px; padding: 7px 10px; color: var(--gray-700); background: #fff; cursor: pointer; outline: none; }
+  .filter-clear-btn { font-size: 12px; color: var(--gray-500); background: none; border: 1px solid var(--gray-300); border-radius: 4px; padding: 7px 10px; cursor: pointer; white-space: nowrap; }
+  .filter-clear-btn:hover { background: var(--gray-100); }
+
+  /* BUTTONS */
+  .btn { display: inline-flex; align-items: center; gap: 6px; padding: 7px 15px; border-radius: 4px; border: 1px solid; font-size: 13px; font-weight: 600; cursor: pointer; transition: opacity 0.1s; white-space: nowrap; }
+  .btn:hover { opacity: 0.85; }
+  .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+  .btn-primary   { background: var(--brand); color: #fff; border-color: var(--brand); }
+  .btn-secondary { background: #fff; color: var(--gray-700); border-color: var(--gray-300); }
+  .btn-danger    { background: #FEF2F2; color: #991B1B; border-color: #FECACA; }
+  .btn-sm        { padding: 5px 11px; font-size: 11px; }
+  .btn-ghost     { background: transparent; color: var(--gray-500); border-color: transparent; padding: 6px 10px; }
+  .btn-ghost:hover { background: var(--gray-100); opacity: 1; }
+
+  /* STAT CARDS */
+  .stats-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-bottom: 18px; }
+  .stat-card { background: #fff; border: 1px solid var(--gray-200); border-radius: 6px; padding: 13px 15px; display: flex; align-items: center; gap: 11px; }
+  .stat-icon { width: 34px; height: 34px; border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .stat-num { font-size: 22px; font-weight: 700; line-height: 1; }
+  .stat-lbl { font-size: 11px; color: var(--gray-400); margin-top: 2px; }
+
+  /* TABLE */
+  .table-wrap { background: #fff; border: 1px solid var(--gray-200); border-radius: 6px; overflow: hidden; }
+  .table-scroll { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  thead tr { background: var(--gray-50); border-bottom: 1px solid var(--gray-200); }
+  th { padding: 9px 13px; text-align: left; color: var(--gray-500); font-weight: 600; font-size: 10px; text-transform: uppercase; letter-spacing: 0.07em; white-space: nowrap; cursor: pointer; user-select: none; }
+  th:hover { color: var(--gray-700); }
+  th .th-inner { display: inline-flex; align-items: center; gap: 4px; }
+  tbody tr { border-bottom: 1px solid var(--gray-100); transition: background 0.08s; cursor: pointer; }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: #FFF5FA; }
+  td { padding: 10px 13px; color: var(--gray-700); vertical-align: middle; }
+  .td-id { font-family: var(--mono); font-size: 11px; color: var(--brand); background: var(--brand-light); padding: 2px 7px; border-radius: 3px; }
+  .td-customer { font-weight: 600; color: var(--gray-900); max-width: 155px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: block; }
+  .td-date { font-size: 12px; color: var(--gray-500); white-space: nowrap; }
+  .td-fmt  { font-size: 12px; white-space: nowrap; }
+  .td-fix-y { background:#FEF2F2; color:#991B1B; border-radius:3px; padding:2px 7px; font-size:10px; font-weight:700; }
+  .td-fix-n { color: var(--gray-300); }
+  .act-btn { background: none; border-radius: 4px; padding: 4px 7px; cursor: pointer; display: inline-flex; align-items: center; transition: opacity 0.1s; }
+  .act-btn:hover { opacity: 0.65; }
+  .act-edit { border: 1px solid var(--gray-200); margin-right: 4px; }
+  .act-del  { border: 1px solid #FECACA; }
+  .table-footer { padding: 7px 14px; border-top: 1px solid var(--gray-100); background: var(--gray-50); font-size: 11px; color: var(--gray-400); }
+
+  /* BADGES */
+  .badge-mat, .badge-stat, .badge-dd { display: inline-flex; align-items: center; gap: 5px; border-radius: 3px; padding: 2px 8px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+  .badge-mat { border: 1px solid; }
+
+  /* PAGE TITLE */
+  .page-title { font-size: 17px; font-weight: 700; color: var(--gray-900); }
+  .page-sub   { font-size: 11px; color: var(--gray-400); margin-top: 2px; }
+  .page-header { margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+
+  /* MODAL */
+  .overlay { position: fixed; inset: 0; z-index: 100; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.42); padding: 16px; }
+  .modal { background: #fff; border-radius: 6px; width: 100%; box-shadow: 0 20px 56px rgba(0,0,0,0.18); display: flex; flex-direction: column; }
+  .modal-hd { padding: 15px 22px; border-bottom: 1px solid var(--gray-200); display: flex; align-items: center; justify-content: space-between; background: var(--gray-50); flex-shrink: 0; }
+  .modal-title { font-size: 15px; font-weight: 700; }
+  .modal-sub   { font-size: 11px; color: var(--gray-400); margin-top: 1px; font-family: var(--mono); }
+  .modal-close { background: none; border: none; cursor: pointer; padding: 4px; border-radius: 4px; display: flex; align-items: center; color: var(--gray-500); }
+  .modal-body  { padding: 18px 22px; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 14px; }
+  .modal-ft    { padding: 12px 22px; border-top: 1px solid var(--gray-200); display: flex; justify-content: flex-end; gap: 8px; background: var(--gray-50); flex-shrink: 0; }
+
+  /* FORM */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+  .field  { display: flex; flex-direction: column; gap: 4px; }
+  .field label { font-size: 11px; font-weight: 600; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.05em; }
+  .field label .req { color: var(--brand); margin-left: 2px; }
+  .field input, .field select, .field textarea { border: 1px solid var(--gray-300); border-radius: 4px; padding: 7px 10px; font-size: 13px; color: var(--gray-900); background: #fff; outline: none; width: 100%; }
+  .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--brand); }
+  .field textarea { resize: vertical; }
+  .field .hint { font-size: 11px; color: var(--gray-400); margin-top: 2px; }
+  .checkbox-row { display: flex; align-items: center; gap: 8px; height: 34px; }
+  .checkbox-row input { width: 15px; height: 15px; accent-color: var(--brand); cursor: pointer; flex-shrink: 0; }
+  .checkbox-row label { font-size: 13px; color: var(--gray-700); cursor: pointer; font-weight: 500; }
+  .section-sep { border: none; border-top: 1px solid var(--gray-100); margin: 4px 0; }
+  .section-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--gray-400); display: flex; align-items: center; gap: 5px; margin-bottom: 10px; }
+
+  /* DETAIL MODAL */
+  .detail-info-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; row-gap: 12px; }
+  .info-item .info-lbl { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; color: var(--gray-400); margin-bottom: 5px; }
+  .info-item .info-val { font-size: 13px; }
+  .konf-table { width: 100%; border-collapse: collapse; }
+  .konf-table td { padding: 6px 0; vertical-align: top; }
+  .konf-table .kl { width: 55px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--gray-400); }
+  .konf-table .kv { font-size: 13px; color: var(--gray-700); font-weight: 500; border-bottom: 1px solid #F9FAFB; }
+  .note-box { font-size: 13px; color: var(--gray-700); line-height: 1.65; padding: 10px 14px; background: var(--gray-50); border-left: 3px solid var(--brand); border-radius: 0 4px 4px 0; }
+  .detail-actions { padding: 12px 22px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+  .detail-section { padding: 14px 22px; border-bottom: 1px solid var(--gray-100); }
+
+  /* CONFIRM */
+  .confirm-icon { width: 36px; height: 36px; border-radius: 50%; background: #FEF2F2; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+
+  /* ── CALENDAR ── */
+  .cal-wrap { background: #fff; border: 1px solid var(--gray-200); border-radius: 6px; overflow: hidden; }
+  .cal-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 18px; border-bottom: 1px solid var(--gray-200); background: var(--gray-50);
+  }
+  .cal-month-label { font-size: 15px; font-weight: 700; color: var(--gray-900); }
+  .cal-nav { display: flex; gap: 4px; }
+  .cal-weekdays {
+    display: grid; grid-template-columns: repeat(7, 1fr);
+    border-bottom: 1px solid var(--gray-200);
+  }
+  .cal-wd {
+    padding: 8px 0; text-align: center;
+    font-size: 10px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.07em; color: var(--gray-400);
+  }
+  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); }
+  .cal-cell {
+    min-height: 96px; padding: 6px; border-right: 1px solid var(--gray-100);
+    border-bottom: 1px solid var(--gray-100); vertical-align: top;
+    position: relative;
+  }
+  .cal-cell:nth-child(7n) { border-right: none; }
+  .cal-cell.other-month .cal-day-num { color: var(--gray-300); }
+  .cal-cell.today { background: #FFFBFB; }
+  .cal-cell.today .cal-day-num {
+    background: var(--brand); color: #fff;
+    width: 22px; height: 22px; border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700;
+  }
+  .cal-day-num { font-size: 11px; font-weight: 600; color: var(--gray-700); margin-bottom: 4px; display: inline-block; width: 22px; height: 22px; line-height: 22px; text-align: center; }
+  .cal-event {
+    display: block; margin-bottom: 2px; padding: 2px 6px;
+    border-radius: 3px; font-size: 10px; font-weight: 600;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    cursor: pointer; border-left: 2px solid transparent;
+  }
+  .cal-event:hover { opacity: 0.8; }
+  .cal-more { font-size: 10px; color: var(--gray-400); cursor: pointer; padding: 1px 4px; }
+  .cal-more:hover { color: var(--brand); }
+  .cal-today-btn { font-size: 12px; }
+
+  /* EVENT DETAIL POPUP */
+  .event-popup {
+    position: fixed; z-index: 150; background: #fff;
+    border: 1px solid var(--gray-200); border-radius: 6px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    padding: 14px 16px; min-width: 240px; max-width: 300px;
+  }
+  .event-popup-title { font-size: 13px; font-weight: 700; margin-bottom: 8px; color: var(--gray-900); }
+  .event-popup-row   { display: flex; gap: 8px; margin-bottom: 4px; align-items: center; }
+  .event-popup-lbl   { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--gray-400); width: 64px; flex-shrink: 0; }
+  .event-popup-val   { font-size: 12px; color: var(--gray-700); }
+  .event-popup-close { position: absolute; top: 8px; right: 8px; background: none; border: none; cursor: pointer; padding: 2px; display: flex; }
+
+  /* HOLIDAY */
+  .cal-holiday {
+    display: block; margin-bottom: 2px; padding: 2px 5px;
+    border-radius: 3px; font-size: 10px; font-weight: 700;
+    color: #991B1B; background: #FEE2E2;
+    border-left: 2px solid #EF4444;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+
+  .hidden { display: none !important; }
+
+  @media (max-width: 900px) {
+    .stats-grid { grid-template-columns: 1fr 1fr; }
+    .grid-3 { grid-template-columns: 1fr 1fr; }
+    .detail-info-grid { grid-template-columns: 1fr 1fr; }
+    .cal-cell { min-height: 72px; }
+  }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- SIDEBAR -->
+  <aside>
+    <div class="logo-wrap">
+      <div class="logo-icon">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2M6 14h12v8H6z"></path></svg>
+      </div>
+      <div>
+        <div class="logo-name">PrintFlow</div>
+        <div class="logo-sub">digitaldruck-er</div>
+      </div>
+    </div>
+
+    <nav>
+      <div class="nav-section">Menü</div>
+      <button class="nav-btn active" onclick="setTab(&#39;auftraege&#39;)" id="nav-auftraege">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+        Aufträge <span class="badge" id="nav-cnt">1</span>
+      </button>
+      <button class="nav-btn" onclick="setTab(&#39;kalender&#39;)" id="nav-kalender">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2z"></path></svg>
+        Kalender
+      </button>
+      <button class="nav-btn" onclick="setTab(&#39;archiv&#39;)" id="nav-archiv">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8v13H3V8M1 3h22v5H1zM10 12h4"></path></svg>
+        Archiv <span class="badge" id="nav-archiv-cnt">1</span>
+      </button>
+
+      <div class="nav-section" style="margin-top:8px;">Nach Status</div>
+      <div id="status-nav"><button class="nav-status-btn" onclick="filterByStatus(&#39;Undefiniert&#39;)">
+      <span class="dot" style="background:#FB923C"></span>
+      <span style="flex:1">Undefiniert</span>
+      <span class="nav-cnt">0</span>
+    </button><button class="nav-status-btn" onclick="filterByStatus(&#39;In Planung&#39;)">
+      <span class="dot" style="background:#9CA3AF"></span>
+      <span style="flex:1">In Planung</span>
+      <span class="nav-cnt">1</span>
+    </button><button class="nav-status-btn" onclick="filterByStatus(&#39;Im Druck&#39;)">
+      <span class="dot" style="background:#EF4444"></span>
+      <span style="flex:1">Im Druck</span>
+      <span class="nav-cnt">0</span>
+    </button><button class="nav-status-btn" onclick="filterByStatus(&#39;Konfektion&#39;)">
+      <span class="dot" style="background:#22C55E"></span>
+      <span style="flex:1">Konfektion</span>
+      <span class="nav-cnt">0</span>
+    </button><button class="nav-status-btn" onclick="filterByStatus(&#39;Versand&#39;)">
+      <span class="dot" style="background:#10B981"></span>
+      <span style="flex:1">Versand</span>
+      <span class="nav-cnt">0</span>
+    </button></div>
+    </nav>
+
+    <div class="sidebar-footer">PrintFlow · digitaldruck-er.de</div>
+  </aside>
+
+  <!-- MAIN -->
+  <div id="main">
+    <header>
+      <div class="search-wrap" id="search-area" style="">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0"></path></svg>
+        <input class="search-input" id="search-input" type="text" placeholder="Auftrag, Kunde oder Material …" oninput="applyFilters()">
+      </div>
+      <select class="topbar-select" id="filter-mat" onchange="applyFilters()" style="">
+        <option>Alle</option>
+        <option>Anderes Material</option><option>Dekotex Subil</option><option>Backlit Subil</option><option>Blockout Subil</option><option>Suntex</option><option>Fahne</option><option>Leinwand</option><option>Dekotex Latex</option><option>Backlit Latex</option><option>Blockout Latex</option><option>PVC Frontlit</option><option>PVC Mesh</option><option>Roll-Up Film</option><option>Monomere Folie</option><option>Polymere Folie</option><option>Easy Stick Folie</option><option>Transparente Folie</option><option>Dekotex Satin</option>
+      </select>
+      <select class="topbar-select" id="filter-stat" onchange="applyFilters()" style="">
+        <option>Alle</option>
+        <option>Undefiniert</option><option>In Planung</option><option>Im Druck</option><option>Konfektion</option><option>Versand</option><option>Abgeschlossen</option>
+      </select>
+      <button class="filter-clear-btn hidden" id="clear-btn" onclick="clearFilters()">Filter ×</button>
+      <button class="btn btn-primary" onclick="openNewForm()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"></path></svg>
+        Neuer Auftrag
+      </button>
+    </header>
+
+    <div id="content">
+      <!-- AUFTRAEGE VIEW -->
+      <div id="view-auftraege" class="">
+        <div class="page-header">
+          <div>
+            <div class="page-title">Auftragsübersicht</div>
+            <div class="page-sub" id="order-count">1 Aufträge</div>
+          </div>
+        </div>
+        <div class="stats-grid" id="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon" style="background:#F3F4F6">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#374151" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+      </div>
+      <div><div class="stat-num">1</div><div class="stat-lbl">Gesamt</div></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon" style="background:#EFF6FF">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2M6 14h12v8H6z"></path></svg>
+      </div>
+      <div><div class="stat-num">0</div><div class="stat-lbl">Im Druck</div></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon" style="background:#FEF2F2">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#DC2626" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0zM12 9v4M12 17h.01"></path></svg>
+      </div>
+      <div><div class="stat-num">1</div><div class="stat-lbl">Fixtermine</div></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon" style="background:#FFFBEB">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#92400E" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z M7 7h.01"></path></svg>
+      </div>
+      <div><div class="stat-num">0</div><div class="stat-lbl">Ausstehend</div></div>
+    </div></div>
+        <div class="table-wrap">
+          <div class="table-scroll">
+            <table id="orders-table">
+              <thead>
+                <tr>
+                  <th onclick="sortBy(&#39;id&#39;)"><span class="th-inner">Auftragsnummer <span id="sort-id">⇅</span></span></th>
+                  <th onclick="sortBy(&#39;startDate&#39;)"><span class="th-inner">Datum <span id="sort-startDate">⇅</span></span></th>
+                  <th onclick="sortBy(&#39;customer&#39;)"><span class="th-inner">Kunde <span id="sort-customer">⇅</span></span></th>
+                  <th onclick="sortBy(&#39;material&#39;)"><span class="th-inner">Material <span id="sort-material">⇅</span></span></th>
+                  <th onclick="sortBy(&#39;status&#39;)"><span class="th-inner">Status <span id="sort-status">⇅</span></span></th>
+                  <th onclick="sortBy(&#39;druckdaten&#39;)"><span class="th-inner">Druckdaten <span id="sort-druckdaten">⇅</span></span></th>
+                  <th onclick="sortBy(&#39;mengeFormat&#39;)"><span class="th-inner">Format <span id="sort-mengeFormat">⇅</span></span></th>
+                  <th onclick="sortBy(&#39;lieferdatum&#39;)"><span class="th-inner">Lieferung <span id="sort-lieferdatum">⇅</span></span></th>
+                  <th onclick="sortBy(&#39;fixtermin&#39;)"><span class="th-inner">Fix <span id="sort-fixtermin">⇅</span></span></th>
+                  <th style="text-align:right">Aktionen</th>
+                </tr>
+              </thead>
+              <tbody id="orders-tbody">
+    <tr onclick="openDetail(&#39;AU-2024-0898&#39;)">
+      <td><span class="td-id">12545</span></td>
+      <td><span class="td-date">05. März</span></td>
+      <td><span class="td-customer">KOHLSCHEIN | MESSE MIT SYSTEM</span></td>
+      <td><span class="badge-mat" style="background:#FEFCE8;color:#854D0E;border-color:#FDE047">Dekotex Subil</span></td>
+      <td><span class="badge-stat" style="background:#F3F4F6;color:#374151"><span class="dot" style="background:#9CA3AF"></span>In Planung</span></td>
+      <td><span class="badge-dd" style="background:#ECFDF5;color:#065F46">Vollständig</span></td>
+      <td><span class="td-fmt">2 Stk. (146,2 cm x 102 cm) (251,2 cm x 102 cm)</span></td>
+      <td><span style="font-size:12px;font-weight:500;color:#991B1B;white-space:nowrap">17. März</span></td>
+      <td style="text-align:center"><span class="td-fix-y">JA</span></td>
+      <td style="text-align:right;white-space:nowrap" onclick="event.stopPropagation()">
+        <button class="act-btn act-edit" title="Bearbeiten" onclick="openEditForm(&#39;AU-2024-0898&#39;)">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+        </button>
+        <button class="act-btn act-del" title="Löschen" onclick="askDelete(&#39;AU-2024-0898&#39;)">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#DC2626" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"></path></svg>
+        </button>
+      </td>
+    </tr></tbody>
+            </table>
+          </div>
+          <div class="table-footer" id="table-footer">1 von 1 Aufträgen angezeigt</div>
+        </div>
+      </div>
+
+      <!-- KALENDER VIEW -->
+      <div id="view-kalender" class="hidden">
+        <div class="page-header">
+          <div>
+            <div class="page-title">Kalender</div>
+            <div class="page-sub" id="cal-subtitle">Liefertermine &amp; Aufträge</div>
+          </div>
+        </div>
+        <div class="cal-wrap">
+          <div class="cal-header">
+            <div class="cal-nav">
+              <button class="btn btn-ghost btn-sm" onclick="calNav(-1)">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg>
+              </button>
+              <button class="btn btn-ghost btn-sm cal-today-btn" onclick="calToday()">Heute</button>
+              <button class="btn btn-ghost btn-sm" onclick="calNav(1)">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"></path></svg>
+              </button>
+            </div>
+            <div class="cal-month-label" id="cal-month-label">März 2026</div>
+            <div style="display:flex;align-items:center;gap:8px;font-size:11px;color:var(--gray-400);flex-wrap:wrap;">
+              <span style="display:inline-flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:#FEE2E2;border:1px solid #EF4444;display:inline-block"></span>Feiertag NRW</span>
+              <span style="display:inline-flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:#FFFBEB;border:1px solid #F59E0B;display:inline-block"></span>Liefertermin</span>
+              <span style="display:inline-flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:#FEF2F2;border:1px solid #EF4444;display:inline-block"></span>Fixtermin</span>
+              <span style="display:inline-flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:#EFF6FF;border:1px solid #3B82F6;display:inline-block"></span>Startdatum</span>
+            </div>
+          </div>
+          <div class="cal-weekdays">
+            <div class="cal-wd">Mo</div><div class="cal-wd">Di</div><div class="cal-wd">Mi</div>
+            <div class="cal-wd">Do</div><div class="cal-wd">Fr</div>
+            <div class="cal-wd" style="color:#EF4444">Sa</div>
+            <div class="cal-wd" style="color:#EF4444">So</div>
+          </div>
+          <div class="cal-grid" id="cal-grid"><div class="cal-cell other-month"><span class="cal-day-num" style="">23</span></div><div class="cal-cell other-month"><span class="cal-day-num" style="">24</span></div><div class="cal-cell other-month"><span class="cal-day-num" style="">25</span></div><div class="cal-cell other-month"><span class="cal-day-num" style="">26</span></div><div class="cal-cell other-month"><span class="cal-day-num" style="">27</span></div><div class="cal-cell other-month"><span class="cal-day-num" style="color:#DC2626;">28</span></div><div class="cal-cell"><span class="cal-day-num" style="color:#DC2626;">1</span></div><div class="cal-cell"><span class="cal-day-num" style="">2</span></div><div class="cal-cell"><span class="cal-day-num" style="">3</span></div><div class="cal-cell"><span class="cal-day-num" style="">4</span></div><div class="cal-cell"><span class="cal-day-num" style="">5</span><span class="cal-event" style="background:#EFF6FF;color:#1D4ED8;border-left-color:#3B82F6" title="KOHLSCHEIN | MESSE MIT SYSTEM" onclick="showEventPopup(event,&#39;AU-2024-0898&#39;)">↑ KOHLSCHEIN | MESSE MIT SYSTEM</span></div><div class="cal-cell"><span class="cal-day-num" style="">6</span></div><div class="cal-cell"><span class="cal-day-num" style="color:#DC2626;">7</span></div><div class="cal-cell"><span class="cal-day-num" style="color:#DC2626;">8</span></div><div class="cal-cell today"><span class="cal-day-num" style="">9</span></div><div class="cal-cell"><span class="cal-day-num" style="">10</span></div><div class="cal-cell"><span class="cal-day-num" style="">11</span></div><div class="cal-cell"><span class="cal-day-num" style="">12</span></div><div class="cal-cell"><span class="cal-day-num" style="">13</span></div><div class="cal-cell"><span class="cal-day-num" style="color:#DC2626;">14</span></div><div class="cal-cell"><span class="cal-day-num" style="color:#DC2626;">15</span></div><div class="cal-cell"><span class="cal-day-num" style="">16</span></div><div class="cal-cell"><span class="cal-day-num" style="">17</span><span class="cal-event" style="background:#FEF2F2;color:#991B1B;border-left-color:#EF4444" title="KOHLSCHEIN | MESSE MIT SYSTEM" onclick="showEventPopup(event,&#39;AU-2024-0898&#39;)">✓ KOHLSCHEIN | MESSE MIT SYSTEM</span></div><div class="cal-cell"><span class="cal-day-num" style="">18</span></div><div class="cal-cell"><span class="cal-day-num" style="">19</span></div><div class="cal-cell"><span class="cal-day-num" style="">20</span></div><div class="cal-cell"><span class="cal-day-num" style="color:#DC2626;">21</span></div><div class="cal-cell"><span class="cal-day-num" style="color:#DC2626;">22</span></div><div class="cal-cell"><span class="cal-day-num" style="">23</span></div><div class="cal-cell"><span class="cal-day-num" style="">24</span></div><div class="cal-cell"><span class="cal-day-num" style="">25</span></div><div class="cal-cell"><span class="cal-day-num" style="">26</span></div><div class="cal-cell"><span class="cal-day-num" style="">27</span></div><div class="cal-cell"><span class="cal-day-num" style="color:#DC2626;">28</span></div><div class="cal-cell"><span class="cal-day-num" style="color:#DC2626;">29</span></div><div class="cal-cell"><span class="cal-day-num" style="">30</span></div><div class="cal-cell"><span class="cal-day-num" style="">31</span></div><div class="cal-cell other-month"><span class="cal-day-num" style="">1</span></div><div class="cal-cell other-month"><span class="cal-day-num" style="">2</span></div><div class="cal-cell other-month"><span class="cal-day-num" style="">3</span></div><div class="cal-cell other-month"><span class="cal-day-num" style="color:#DC2626;">4</span></div><div class="cal-cell other-month"><span class="cal-day-num" style="color:#DC2626;">5</span></div></div>
+        </div>
+      </div>
+
+      <!-- ARCHIV VIEW -->
+      <div id="view-archiv" class="hidden">
+        <div class="page-header">
+          <div>
+            <div class="page-title">Archiv</div>
+            <div class="page-sub" id="archiv-count">0 abgeschlossene Aufträge</div>
+          </div>
+          <button class="btn btn-danger btn-sm" onclick="clearArchiv()">Archiv leeren</button>
+        </div>
+        <div class="table-wrap">
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>Auftragsnummer</th>
+                  <th>Archiviert</th>
+                  <th>Kunde</th>
+                  <th>Material</th>
+                  <th>Format</th>
+                  <th>Lieferdatum</th>
+                  <th style="text-align:right"></th>
+                </tr>
+              </thead>
+              <tbody id="archiv-tbody"></tbody>
+            </table>
+          </div>
+          <div class="table-footer" id="archiv-footer">0 Einträge</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- EVENT POPUP -->
+<div class="event-popup hidden" id="event-popup">
+  <button class="event-popup-close" onclick="closePopup()">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"></path></svg>
+  </button>
+  <div class="event-popup-title" id="popup-title"></div>
+  <div id="popup-body"></div>
+  <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--gray-100);display:flex;gap:6px;">
+    <button class="btn btn-secondary btn-sm" onclick="openDetailFromPopup()">Detail öffnen</button>
+    <button class="btn btn-primary btn-sm" onclick="closePopup()">Schließen</button>
+  </div>
+</div>
+
+<!-- DETAIL MODAL -->
+<div class="overlay hidden" id="detail-overlay" onclick="closeDetailIfBg(event)">
+  <div class="modal" style="max-width:600px;max-height:90vh;">
+    <div class="modal-hd">
+      <div>
+        <div id="detail-badges" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px;"></div>
+        <div class="modal-title" id="detail-customer"></div>
+      </div>
+      <button class="modal-close" onclick="closeDetail()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"></path></svg>
+      </button>
+    </div>
+    <div style="overflow-y:auto;flex:1;">
+      <div class="detail-section">
+        <div class="detail-info-grid" id="detail-info-grid"></div>
+      </div>
+      <div class="detail-section">
+        <div class="section-label">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a3 3 0 100-6 3 3 0 000 6zM6 15a3 3 0 100 6 3 3 0 000-6z M20 4L8.12 15.88M14.47 14.48L20 20M8.12 8.12L12 12"></path></svg>
+          Konfektion
+        </div>
+        <table class="konf-table" id="detail-konf"></table>
+      </div>
+      <div class="detail-section" id="detail-notes-section">
+        <div class="section-label">Notizen</div>
+        <div class="note-box" id="detail-notes"></div>
+      </div>
+    </div>
+    <div class="detail-actions" id="detail-actions"></div>
+  </div>
+</div>
+
+<!-- FORM MODAL -->
+<div class="overlay hidden" id="form-overlay">
+  <div class="modal" style="max-width:680px;max-height:92vh;">
+    <div class="modal-hd">
+      <div>
+        <div class="modal-title" id="form-title">Neuer Auftrag</div>
+        <div class="modal-sub" id="form-id-sub"></div>
+      </div>
+      <button class="modal-close" onclick="closeForm()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"></path></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="grid-2">
+        <div class="field"><label>Kundenname <span class="req">*</span></label><input type="text" id="f-customer" placeholder="z. B. Messe Frankfurt GmbH" oninput="validateForm()"></div>
+        <div class="field"><label>Menge &amp; Format <span class="req">*</span></label><input type="text" id="f-format" placeholder="z. B. 4 Stk. 300x250cm" oninput="validateForm()"></div>
+      </div>
+      <div class="grid-2">
+        <div class="field"><label>Auftragsnummer</label><input type="text" id="f-auftragsnr" placeholder="z. B. AU-2024-0901"></div>
+        <div class="field"><label>Motiv Dateipfad</label><input type="text" id="f-dateipfad" placeholder="z. B. /Projekte/Kunde/motiv_v2.pdf"></div>
+      </div>
+      <div class="grid-3">
+        <div class="field"><label>Startdatum</label><input type="date" id="f-start"></div>
+        <div class="field"><label>Lieferdatum</label><input type="date" id="f-liefer"></div>
+        <div class="field"><label>Fixtermin</label>
+          <div class="checkbox-row"><input type="checkbox" id="f-fix"><label for="f-fix">Ja, Fixtermin</label></div>
+        </div>
+      </div>
+      <div class="grid-3">
+        <div class="field"><label>Material</label>
+          <select id="f-material">
+            <option>Anderes Material</option><option>Dekotex Subil</option><option>Backlit Subil</option><option>Blockout Subil</option><option>Suntex</option><option>Fahne</option><option>Leinwand</option><option>Dekotex Latex</option><option>Backlit Latex</option><option>Blockout Latex</option><option>PVC Frontlit</option><option>PVC Mesh</option><option>Roll-Up Film</option><option>Monomere Folie</option><option>Polymere Folie</option><option>Easy Stick Folie</option><option>Transparente Folie</option><option>Dekotex Satin</option>
+          </select>
+        </div>
+        <div class="field"><label>Status</label>
+          <select id="f-status">
+            <option>Undefiniert</option><option>In Planung</option><option>Im Druck</option><option>Konfektion</option><option>Versand</option><option>Abgeschlossen</option>
+          </select>
+        </div>
+        <div class="field"><label>Druckdaten</label>
+          <select id="f-druckdaten">
+            <option>Ausstehend</option><option>Vollständig</option><option>Korrektur</option>
+          </select>
+        </div>
+      </div>
+
+      <hr class="section-sep">
+      <div class="section-label">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a3 3 0 100-6 3 3 0 000 6zM6 15a3 3 0 100 6 3 3 0 000-6z M20 4L8.12 15.88M14.47 14.48L20 20M8.12 8.12L12 12"></path></svg>
+        Konfektion
+      </div>
+      <div class="grid-2">
+        <div class="field"><label>Oben</label><select id="f-k-oben"><option>—</option><option>Gummilippe 12mm</option><option>Gummilippe 14mm</option><option>Auf Mass geschnitten</option><option>Hohlsaum 20mm</option><option>Hohlsaum 30mm</option><option>Hohlsaum 50mm</option><option>Hohlsaum 80mm</option><option>Einfach gesäumt</option><option>Doppelt gesäumt</option><option>Klettband 20mm</option><option>Klettband 50mm</option><option>Flauschband 20mm</option><option>Flauschband 50mm</option><option>Mit Gurtband verstärkt und alle 30cm geöst</option><option>Mit Gurtband verstärkt und alle 50cm geöst</option><option>Mit Besatzband und Karabinerhaken</option><option>Andere Konfektion</option></select></div>
+        <div class="field"><label>Unten</label><select id="f-k-unten"><option>—</option><option>Gummilippe 12mm</option><option>Gummilippe 14mm</option><option>Auf Mass geschnitten</option><option>Hohlsaum 20mm</option><option>Hohlsaum 30mm</option><option>Hohlsaum 50mm</option><option>Hohlsaum 80mm</option><option>Einfach gesäumt</option><option>Doppelt gesäumt</option><option>Klettband 20mm</option><option>Klettband 50mm</option><option>Flauschband 20mm</option><option>Flauschband 50mm</option><option>Mit Gurtband verstärkt und alle 30cm geöst</option><option>Mit Gurtband verstärkt und alle 50cm geöst</option><option>Mit Besatzband und Karabinerhaken</option><option>Andere Konfektion</option></select></div>
+        <div class="field"><label>Links</label><select id="f-k-links"><option>—</option><option>Gummilippe 12mm</option><option>Gummilippe 14mm</option><option>Auf Mass geschnitten</option><option>Hohlsaum 20mm</option><option>Hohlsaum 30mm</option><option>Hohlsaum 50mm</option><option>Hohlsaum 80mm</option><option>Einfach gesäumt</option><option>Doppelt gesäumt</option><option>Klettband 20mm</option><option>Klettband 50mm</option><option>Flauschband 20mm</option><option>Flauschband 50mm</option><option>Mit Gurtband verstärkt und alle 30cm geöst</option><option>Mit Gurtband verstärkt und alle 50cm geöst</option><option>Mit Besatzband und Karabinerhaken</option><option>Andere Konfektion</option></select></div>
+        <div class="field"><label>Rechts</label><select id="f-k-rechts"><option>—</option><option>Gummilippe 12mm</option><option>Gummilippe 14mm</option><option>Auf Mass geschnitten</option><option>Hohlsaum 20mm</option><option>Hohlsaum 30mm</option><option>Hohlsaum 50mm</option><option>Hohlsaum 80mm</option><option>Einfach gesäumt</option><option>Doppelt gesäumt</option><option>Klettband 20mm</option><option>Klettband 50mm</option><option>Flauschband 20mm</option><option>Flauschband 50mm</option><option>Mit Gurtband verstärkt und alle 30cm geöst</option><option>Mit Gurtband verstärkt und alle 50cm geöst</option><option>Mit Besatzband und Karabinerhaken</option><option>Andere Konfektion</option></select></div>
+      </div>
+      <div class="field"><label>Notizen</label>
+        <textarea id="f-notizen" rows="5" placeholder="Interne Bemerkungen …"></textarea>
+      </div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-secondary" onclick="closeForm()">Abbrechen</button>
+      <button class="btn btn-primary" id="form-save-btn" onclick="saveForm()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"></path></svg> Auftrag erstellen</button>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIRM MODAL -->
+<div class="overlay hidden" id="confirm-overlay">
+  <div class="modal" style="max-width:360px;">
+    <div class="modal-body" style="padding:24px 22px;">
+      <div style="display:flex;gap:12px;align-items:flex-start;">
+        <div class="confirm-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#DC2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0zM12 9v4M12 17h.01"></path></svg>
+        </div>
+        <div>
+          <div style="font-size:14px;font-weight:700;margin-bottom:4px;">Auftrag löschen</div>
+          <div style="font-size:13px;color:#6B7280;line-height:1.5;" id="confirm-msg">Auftrag <strong>AU-2024-0891</strong> wird unwiderruflich gelöscht. Fortfahren?</div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-secondary" onclick="closeConfirm()">Abbrechen</button>
+      <button class="btn btn-danger" id="confirm-ok-btn">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#991B1B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"></path></svg>
+        Löschen
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── DATA CONFIG ────────────────────────────────────────────────────────────────
+const MAT_COLOR = {
+  "Dekotex Subil":   {bg:"#FEFCE8",text:"#854D0E",border:"#FDE047"},
+  "Backlit Subil":   {bg:"#FDF2F8",text:"#9D174D",border:"#F9A8D4"},
+  "Blockout Subil":  {bg:"#EFF6FF",text:"#1E40AF",border:"#93C5FD"},
+};
+const MAT_COLOR_DEFAULT = {bg:"#F3F4F6",text:"#374151",border:"#D1D5DB"};
+function getMatColor(v) { return MAT_COLOR[v] || MAT_COLOR_DEFAULT; }
+const STAT_COLOR = {
+  "Undefiniert":   {bg:"#FFF7ED",text:"#9A3412",dot:"#FB923C"},
+  "In Planung":    {bg:"#F3F4F6",text:"#374151",dot:"#9CA3AF"},
+  "Im Druck":      {bg:"#FEF2F2",text:"#991B1B",dot:"#EF4444"},
+  "Konfektion":    {bg:"#F0FDF4",text:"#166534",dot:"#22C55E"},
+  "Versand":       {bg:"#ECFDF5",text:"#065F46",dot:"#10B981"},
+  "Abgeschlossen": {bg:"#F9FAFB",text:"#6B7280",dot:"#D1D5DB"},
+};
+const DD_COLOR = {
+  "Vollständig": {bg:"#ECFDF5",text:"#065F46"},
+  "Ausstehend":  {bg:"#FFFBEB",text:"#92400E"},
+  "Korrektur":   {bg:"#FFF0F7",text:"#A8004F"},
+};
+const MACHINES = [
+  {id:"M1",name:"EFI Vutek Q5r",    type:"Großformat Roll",  color:"#3B82F6"},
+  {id:"M2",name:"Durst P10 250",    type:"Großformat Plano", color:"#8B5CF6"},
+  {id:"M3",name:"HP Latex 800",     type:"Textil / Subli",   color:"#10B981"},
+  {id:"M4",name:"Zund G3 XL",       type:"Schneide / CNC",   color:"#F59E0B"},
+  {id:"M5",name:"Esko Kongsberg XP",type:"Konfektion",       color:"#D4006A"},
+];
+const KONF_OPTS = ["—","Gummilippe 12mm","Gummilippe 14mm","Auf Mass geschnitten","Hohlsaum 20mm","Hohlsaum 30mm","Hohlsaum 50mm","Hohlsaum 80mm","Einfach gesäumt","Doppelt gesäumt","Klettband 20mm","Klettband 50mm","Flauschband 20mm","Flauschband 50mm","Mit Gurtband verstärkt und alle 30cm geöst","Mit Gurtband verstärkt und alle 50cm geöst","Mit Besatzband und Karabinerhaken","Andere Konfektion"];
+const STATUS_LIST = ["Undefiniert","In Planung","Im Druck","Konfektion","Versand","Abgeschlossen"];
+
+let orders = [
+  {id:"AU-2024-0891",startDate:"2024-07-01",customer:"Messe Frankfurt GmbH",  status:"Im Druck",    material:"Dekotex Subli",druckdaten:"Vollständig",mengeFormat:"4 Stk. 300x250cm",lieferdatum:"2024-07-08",fixtermin:true, machine:"M3",konfektion:{oben:"Hohlsaum 50mm",unten:"Gummilippe 12mm",links:"Ösen 50cm Abstand",rechts:"Ösen 50cm Abstand"},notizen:"Rückwand Hauptstand IAA. Farbprofil ISO Coated v2 beachten."},
+  {id:"AU-2024-0892",startDate:"2024-07-02",customer:"BMW AG Marketing",      status:"Konfektion",  material:"Backlit",      druckdaten:"Vollständig",mengeFormat:"2 Stk. 120x180cm",lieferdatum:"2024-07-05",fixtermin:true, machine:"M2",konfektion:{oben:"Aluminium-Klemmschiene",unten:"Aluminium-Klemmschiene",links:"Kein Saum",rechts:"Kein Saum"},notizen:"Leuchtkasten-Einleger, gleichmäßige Lichtdurchlässigkeit."},
+  {id:"AU-2024-0893",startDate:"2024-07-02",customer:"Event Solutions AG",    status:"In Planung",  material:"Mesh",         druckdaten:"Ausstehend", mengeFormat:"1 Stk. 500x400cm",lieferdatum:"2024-07-12",fixtermin:false,machine:"M1",konfektion:{oben:"Hohlsaum 80mm",unten:"Hohlsaum 80mm",links:"Ösen 100cm Abstand",rechts:"Ösen 100cm Abstand"},notizen:"Außenbereich – Mesh 30% Transparenz Panaflex."},
+  {id:"AU-2024-0894",startDate:"2024-07-03",customer:"Aldi Süd Filialnetz",  status:"Versand",     material:"PVC Banner",   druckdaten:"Vollständig",mengeFormat:"50 Stk. 80x120cm",lieferdatum:"2024-07-04",fixtermin:true, machine:"M1",konfektion:{oben:"Ösen Ecken",unten:"Ösen Ecken",links:"Kein Saum",rechts:"Kein Saum"},notizen:"Wochenaktions-Banner. Lieferung an 50 Filialen."},
+  {id:"AU-2024-0895",startDate:"2024-07-03",customer:"Architekturbüro Ziegler",status:"Im Druck",  material:"Folie",        druckdaten:"Korrektur",  mengeFormat:"3 Stk. 50x200cm", lieferdatum:"2024-07-10",fixtermin:false,machine:"M2",konfektion:{oben:"Kein Saum",unten:"Kein Saum",links:"Kein Saum",rechts:"Kein Saum"},notizen:"Schaufenster-Sichtschutzfolie. Freigabe durch Architekt ausstehend."},
+  {id:"AU-2024-0896",startDate:"2024-07-04",customer:"Sportverein Rot-Weiss", status:"In Planung", material:"Blockout",     druckdaten:"Ausstehend", mengeFormat:"6 Stk. 100x80cm", lieferdatum:"2024-07-15",fixtermin:false,machine:"M1",konfektion:{oben:"Gummilippe 12mm",unten:"Gummilippe 12mm",links:"Gummilippe 12mm",rechts:"Gummilippe 12mm"},notizen:"Bandenwerbung Sportstätte. Vollflächig, keine Transparenz."},
+  {id:"AU-2024-0897",startDate:"2024-07-05",customer:"Globus SB-Warenhaus",   status:"Abgeschlossen",material:"Dekotex Subli",druckdaten:"Vollständig",mengeFormat:"8 Stk. 200x300cm",lieferdatum:"2024-07-03",fixtermin:true, machine:"M3",konfektion:{oben:"Hohlsaum 50mm",unten:"Gewichtsband",links:"Kein Saum",rechts:"Kein Saum"},notizen:"Sommer-Promotion. Erfolgreich ausgeliefert."},
+];
+
+let nextNum = 898;
+let archivedOrders = [];
+let sortField = "startDate", sortDir = "desc";
+let currentTab = "auftraege";
+let editingId = null;
+let confirmCallback = null;
+let detailId = null;
+let calYear, calMonth;
+let popupOrderId = null;
+
+// ── HELPERS ────────────────────────────────────────────────────────────────────
+const fmtDate  = d => d ? new Date(d+'T00:00:00').toLocaleDateString("de-DE",{day:"2-digit",month:"2-digit",year:"numeric"}) : "—";
+const fmtShort = d => d ? new Date(d+'T00:00:00').toLocaleDateString("de-DE",{day:"2-digit",month:"short"}) : "—";
+const esc = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+
+function matBadge(v) {
+  const c = getMatColor(v);
+  return `<span class="badge-mat" style="background:${c.bg};color:${c.text};border-color:${c.border}">${esc(v)}</span>`;
+}
+function statBadge(v) {
+  const c = STAT_COLOR[v]||{bg:"#f5f5f5",text:"#333",dot:"#999"};
+  return `<span class="badge-stat" style="background:${c.bg};color:${c.text}"><span class="dot" style="background:${c.dot}"></span>${esc(v)}</span>`;
+}
+function ddBadge(v) {
+  const c = DD_COLOR[v]||{bg:"#f5f5f5",text:"#333"};
+  return `<span class="badge-dd" style="background:${c.bg};color:${c.text}">${esc(v)}</span>`;
+}
+
+// ── TAB SWITCHING ──────────────────────────────────────────────────────────────
+function setTab(tab) {
+  currentTab = tab;
+  ["auftraege","kalender","archiv"].forEach(t => {
+    document.getElementById("view-"+t).classList.toggle("hidden", t !== tab);
+    const navEl = document.getElementById("nav-"+t);
+    if (navEl) navEl.classList.toggle("active", t === tab);
+  });
+  const searchArea = document.getElementById("search-area");
+  const fMat  = document.getElementById("filter-mat");
+  const fStat = document.getElementById("filter-stat");
+  const clearBtn = document.getElementById("clear-btn");
+  const isFiltered = tab === "auftraege";
+  searchArea.style.display = isFiltered ? "" : "none";
+  fMat.style.display  = isFiltered ? "" : "none";
+  fStat.style.display = isFiltered ? "" : "none";
+  if (!isFiltered) clearBtn.classList.add("hidden");
+  if (tab === "kalender") renderCalendar();
+  if (tab === "archiv")   renderArchiv();
+}
+
+// ── STATUS NAV ─────────────────────────────────────────────────────────────────
+function renderStatusNav() {
+  const el = document.getElementById("status-nav");
+  const navStats = STATUS_LIST.filter(s => s !== "Abgeschlossen");
+  el.innerHTML = navStats.map(s => {
+    const c = STAT_COLOR[s] || {dot:"#9CA3AF"};
+    const cnt = orders.filter(o => o.status === s).length;
+    return `<button class="nav-status-btn" onclick="filterByStatus('${s}')">
+      <span class="dot" style="background:${c.dot}"></span>
+      <span style="flex:1">${esc(s)}</span>
+      <span class="nav-cnt">${cnt}</span>
+    </button>`;
+  }).join("");
+  // Update archiv badge
+  const navCnt = document.getElementById("nav-archiv-cnt");
+  if (navCnt) navCnt.textContent = archivedOrders.length;
+}
+
+function filterByStatus(s) {
+  document.getElementById("filter-stat").value = s;
+  setTab("auftraege");
+  applyFilters();
+}
+
+// ── STATS ──────────────────────────────────────────────────────────────────────
+function renderStats() {
+  const total      = orders.length;
+  const imDruck    = orders.filter(o => o.status === "Im Druck").length;
+  const fix        = orders.filter(o => o.fixtermin && o.status !== "Abgeschlossen").length;
+  const ausstehend = orders.filter(o => o.druckdaten === "Ausstehend").length;
+  const cards = [
+    {l:"Gesamt",     v:total,      bg:"#F3F4F6",ic:"#374151",icon:"M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"},
+    {l:"Im Druck",   v:imDruck,    bg:"#EFF6FF",ic:"#1D4ED8",icon:"M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2M6 14h12v8H6z"},
+    {l:"Fixtermine", v:fix,        bg:"#FEF2F2",ic:"#DC2626",icon:"M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0zM12 9v4M12 17h.01"},
+    {l:"Ausstehend", v:ausstehend, bg:"#FFFBEB",ic:"#92400E",icon:"M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z M7 7h.01"},
+  ];
+  document.getElementById("stats-grid").innerHTML = cards.map(c => `
+    <div class="stat-card">
+      <div class="stat-icon" style="background:${c.bg}">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="${c.ic}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="${c.icon}"/></svg>
+      </div>
+      <div><div class="stat-num">${c.v}</div><div class="stat-lbl">${c.l}</div></div>
+    </div>`).join("");
+  document.getElementById("nav-cnt").textContent = total;
+}
+
+// ── TABLE ──────────────────────────────────────────────────────────────────────
+function applyFilters() {
+  const q    = document.getElementById("search-input").value.toLowerCase();
+  const mat  = document.getElementById("filter-mat").value;
+  const stat = document.getElementById("filter-stat").value;
+  let data = orders.filter(o => {
+    const matchQ = !q || o.id.toLowerCase().includes(q) || o.customer.toLowerCase().includes(q) || o.material.toLowerCase().includes(q) || o.status.toLowerCase().includes(q);
+    const matchM = mat === "Alle" || o.material === mat;
+    const matchS = stat === "Alle" || o.status === stat;
+    return matchQ && matchM && matchS;
+  });
+  data.sort((a,b) => {
+    let av = a[sortField]??"", bv = b[sortField]??"";
+    if (typeof av === "string") { av = av.toLowerCase(); bv = bv.toLowerCase(); }
+    return sortDir === "asc" ? (av > bv ? 1 : -1) : (av < bv ? 1 : -1);
+  });
+  renderTable(data);
+  document.getElementById("clear-btn").classList.toggle("hidden", mat === "Alle" && stat === "Alle" && !q);
+}
+
+function clearFilters() {
+  document.getElementById("search-input").value = "";
+  document.getElementById("filter-mat").value = "Alle";
+  document.getElementById("filter-stat").value = "Alle";
+  applyFilters();
+}
+
+function sortBy(field) {
+  if (sortField === field) sortDir = sortDir === "asc" ? "desc" : "asc";
+  else { sortField = field; sortDir = "asc"; }
+  ["id","startDate","customer","material","status","druckdaten","mengeFormat","lieferdatum","fixtermin"].forEach(f => {
+    const el = document.getElementById("sort-"+f);
+    if (el) { el.textContent = f === sortField ? (sortDir === "asc" ? "↑" : "↓") : "⇅"; el.style.color = f === sortField ? "#D4006A" : "#D1D5DB"; }
+  });
+  applyFilters();
+}
+
+function renderTable(data) {
+  const tbody = document.getElementById("orders-tbody");
+  if (!data.length) {
+    tbody.innerHTML = `<tr><td colspan="10" style="padding:48px;text-align:center;color:#9CA3AF;font-size:14px;">Keine Aufträge gefunden.</td></tr>`;
+    document.getElementById("table-footer").textContent = `0 von ${orders.length} Aufträgen angezeigt`;
+    document.getElementById("order-count").textContent = "0 Aufträge";
+    return;
+  }
+  tbody.innerHTML = data.map(o => `
+    <tr onclick="openDetail('${o.id}')">
+      <td><span class="td-id">${esc(o.auftragsnr || o.id)}</span></td>
+      <td><span class="td-date">${fmtShort(o.startDate)}</span></td>
+      <td><span class="td-customer">${esc(o.customer)}</span></td>
+      <td>${matBadge(o.material)}</td>
+      <td>${statBadge(o.status)}</td>
+      <td>${ddBadge(o.druckdaten)}</td>
+      <td><span class="td-fmt">${esc(o.mengeFormat)}</span></td>
+      <td><span style="font-size:12px;font-weight:500;color:${o.fixtermin?"#991B1B":"#374151"};white-space:nowrap">${fmtShort(o.lieferdatum)}</span></td>
+      <td style="text-align:center">${o.fixtermin?'<span class="td-fix-y">JA</span>':'<span class="td-fix-n">–</span>'}</td>
+      <td style="text-align:right;white-space:nowrap" onclick="event.stopPropagation()">
+        <button class="act-btn act-edit" title="Bearbeiten" onclick="openEditForm('${o.id}')">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        </button>
+        <button class="act-btn act-del" title="Löschen" onclick="askDelete('${o.id}')">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#DC2626" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg>
+        </button>
+      </td>
+    </tr>`).join("");
+  document.getElementById("table-footer").textContent = `${data.length} von ${orders.length} Aufträgen angezeigt`;
+  document.getElementById("order-count").textContent = `${data.length} Aufträge`;
+}
+
+// ── NRW FEIERTAGE ──────────────────────────────────────────────────────────────
+function easterSunday(year) {
+  const a = year % 19, b = Math.floor(year / 100), c = year % 100;
+  const d = Math.floor(b / 4), e = b % 4, f = Math.floor((b + 8) / 25);
+  const g = Math.floor((b - f + 1) / 3), h = (19*a + b - d - g + 15) % 30;
+  const i = Math.floor(c / 4), k = c % 4;
+  const l = (32 + 2*e + 2*i - h - k) % 7;
+  const m = Math.floor((a + 11*h + 22*l) / 451);
+  const month = Math.floor((h + l - 7*m + 114) / 31);
+  const day   = ((h + l - 7*m + 114) % 31) + 1;
+  return new Date(year, month - 1, day);
+}
+
+function getNRWHolidays(year) {
+  const easter = easterSunday(year);
+  const add = (d, days) => { const r = new Date(d); r.setDate(r.getDate() + days); return r; };
+  const fmt  = d => d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0");
+  return {
+    [year+"-01-01"]: "Neujahr",
+    [year+"-01-06"]: "Heilige Drei Könige",
+    [year+"-05-01"]: "Tag der Arbeit",
+    [year+"-10-03"]: "Tag der Deutschen Einheit",
+    [year+"-11-01"]: "Allerheiligen",
+    [year+"-12-25"]: "1. Weihnachtstag",
+    [year+"-12-26"]: "2. Weihnachtstag",
+    [fmt(add(easter,-2))]:  "Karfreitag",
+    [fmt(easter)]:           "Ostersonntag",
+    [fmt(add(easter, 1))]:  "Ostermontag",
+    [fmt(add(easter,39))]:  "Christi Himmelfahrt",
+    [fmt(add(easter,49))]:  "Pfingstsonntag",
+    [fmt(add(easter,50))]:  "Pfingstmontag",
+    [fmt(add(easter,60))]:  "Fronleichnam",
+  };
+}
+
+// ── CALENDAR ───────────────────────────────────────────────────────────────────
+function initCal() {
+  const now = new Date();
+  calYear  = now.getFullYear();
+  calMonth = now.getMonth();
+}
+
+function calNav(dir) {
+  calMonth += dir;
+  if (calMonth > 11) { calMonth = 0; calYear++; }
+  if (calMonth < 0)  { calMonth = 11; calYear--; }
+  renderCalendar();
+}
+
+function calToday() {
+  const now = new Date();
+  calYear  = now.getFullYear();
+  calMonth = now.getMonth();
+  renderCalendar();
+}
+
+function renderCalendar() {
+  const MONTHS_DE = ["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"];
+  document.getElementById("cal-month-label").textContent = MONTHS_DE[calMonth] + " " + calYear;
+
+  const today = new Date(); today.setHours(0,0,0,0);
+
+  // NRW Feiertage
+  const holidays = Object.assign({}, getNRWHolidays(calYear-1), getNRWHolidays(calYear), getNRWHolidays(calYear+1));
+
+  const firstDay = new Date(calYear, calMonth, 1);
+  let startOffset = firstDay.getDay() - 1;
+  if (startOffset < 0) startOffset = 6;
+  const daysInMonth = new Date(calYear, calMonth+1, 0).getDate();
+  const daysInPrev  = new Date(calYear, calMonth, 0).getDate();
+
+  // Event map
+  const evMap = {};
+  const addEv = (ds, type, order) => { if (!evMap[ds]) evMap[ds]=[]; evMap[ds].push({type,order}); };
+  orders.forEach(o => {
+    if (o.startDate)   addEv(o.startDate,   "start", o);
+    if (o.lieferdatum) addEv(o.lieferdatum, o.fixtermin ? "fix" : "liefer", o);
+  });
+
+  const totalCells = Math.ceil((startOffset + daysInMonth) / 7) * 7;
+  let html = "";
+
+  for (let i = 0; i < totalCells; i++) {
+    let day, month = calMonth, year = calYear, isOther = false;
+    if (i < startOffset) {
+      day = daysInPrev - startOffset + 1 + i;
+      month = calMonth - 1; if (month < 0) { month = 11; year--; }
+      isOther = true;
+    } else if (i - startOffset >= daysInMonth) {
+      day = i - startOffset - daysInMonth + 1;
+      month = calMonth + 1; if (month > 11) { month = 0; year++; }
+      isOther = true;
+    } else {
+      day = i - startOffset + 1;
+    }
+
+    const cellDate = new Date(year, month, day); cellDate.setHours(0,0,0,0);
+    const isToday   = cellDate.getTime() === today.getTime();
+    const isSat     = cellDate.getDay() === 6;
+    const isSun     = cellDate.getDay() === 0;
+    const dateStr   = year + "-" + String(month+1).padStart(2,"0") + "-" + String(day).padStart(2,"0");
+    const holiday   = holidays[dateStr];
+
+    let cellStyle = "";
+    if (holiday && !isOther) cellStyle = 'style="background:#FFF5F5;"';
+    let cellClass = "cal-cell" + (isOther?" other-month":"") + (isToday?" today":"");
+
+    let dayStyle = (isSat || isSun || (holiday && !isOther)) ? "color:#DC2626;" : "";
+
+    let evHtml = "";
+    // Holiday label
+    if (holiday && !isOther) {
+      evHtml += '<span class="cal-holiday">' + esc(holiday) + '</span>';
+    }
+
+    // Order events
+    const events = evMap[dateStr] || [];
+    const MAX_SHOW = holiday ? 2 : 3;
+    const shown = events.slice(0, MAX_SHOW);
+    const extra = events.length - MAX_SHOW;
+
+    evHtml += shown.map(ev => {
+      let bg, textCol, border;
+      if (ev.type === "fix")         { bg="#FEF2F2"; textCol="#991B1B"; border="#EF4444"; }
+      else if (ev.type === "liefer") { bg="#FFFBEB"; textCol="#92400E"; border="#F59E0B"; }
+      else                           { bg="#EFF6FF"; textCol="#1D4ED8"; border="#3B82F6"; }
+      const label = ev.type === "start" ? "&#x2191; " + ev.order.customer : "&#x2713; " + ev.order.customer;
+      return '<span class="cal-event" style="background:' + bg + ';color:' + textCol + ';border-left-color:' + border + '" title="' + esc(ev.order.customer) + '" onclick="showEventPopup(event,\'' + ev.order.id + '\')">' + label + '</span>';
+    }).join("");
+
+    if (extra > 0) evHtml += '<span class="cal-more">+' + extra + ' mehr</span>';
+
+    html += '<div class="' + cellClass + '" ' + cellStyle + '>';
+    html += '<span class="cal-day-num" style="' + dayStyle + '">' + day + '</span>';
+    html += evHtml + '</div>';
+  }
+
+  document.getElementById("cal-grid").innerHTML = html;
+}
+
+// ── EVENT POPUP ────────────────────────────────────────────────────────────────
+function showEventPopup(e, orderId) {
+  e.stopPropagation();
+  const o = orders.find(x => x.id === orderId);
+  if (!o) return;
+  popupOrderId = orderId;
+  const popup = document.getElementById("event-popup");
+  document.getElementById("popup-title").textContent = o.customer;
+  document.getElementById("popup-body").innerHTML = [
+    {l:"Auftrag",   v:`<span style="font-family:monospace;font-size:11px;color:#D4006A;background:#FFF0F7;padding:1px 6px;border-radius:3px">${esc(o.id)}</span>`},
+    {l:"Status",    v:statBadge(o.status)},
+    {l:"Material",  v:matBadge(o.material)},
+    {l:"Format",    v:esc(o.mengeFormat)},
+    {l:"Lieferung", v:`<span style="font-weight:600;color:${o.fixtermin?"#991B1B":"#374151"}">${fmtDate(o.lieferdatum)}${o.fixtermin?" (FIXTERMIN)":""}</span>`},
+  ].map(r=>`<div class="event-popup-row"><span class="event-popup-lbl">${r.l}</span><span class="event-popup-val">${r.v}</span></div>`).join("");
+
+  // Position popup near click
+  popup.classList.remove("hidden");
+  const rect = popup.getBoundingClientRect();
+  let left = e.clientX + 10;
+  let top  = e.clientY + 10;
+  if (left + 300 > window.innerWidth)  left = e.clientX - 310;
+  if (top  + rect.height > window.innerHeight) top = e.clientY - rect.height - 10;
+  popup.style.left = left + "px";
+  popup.style.top  = top  + "px";
+}
+
+function closePopup() {
+  document.getElementById("event-popup").classList.add("hidden");
+  popupOrderId = null;
+}
+
+function openDetailFromPopup() {
+  closePopup();
+  if (popupOrderId) openDetail(popupOrderId);
+}
+
+// Close popup when clicking elsewhere
+document.addEventListener("click", e => {
+  const popup = document.getElementById("event-popup");
+  if (!popup.classList.contains("hidden") && !popup.contains(e.target)) closePopup();
+});
+
+// ── DETAIL MODAL ───────────────────────────────────────────────────────────────
+function openDetail(id) {
+  const o = orders.find(x => x.id === id);
+  if (!o) return;
+  detailId = id;
+
+
+  let badges = `<span style="font-family:monospace;font-size:11px;color:#6B7280;background:#F3F4F6;padding:2px 8px;border-radius:3px">${esc(o.id)}</span>`;
+  badges += statBadge(o.status);
+  if (o.fixtermin) badges += `<span style="font-size:10px;font-weight:700;color:#991B1B;background:#FEF2F2;border:1px solid #FECACA;border-radius:3px;padding:1px 7px">FIXTERMIN</span>`;
+  document.getElementById("detail-badges").innerHTML = badges;
+  document.getElementById("detail-customer").textContent = o.customer;
+
+  const infos = [
+    {l:"Startdatum",   v:fmtDate(o.startDate)},
+    {l:"Lieferdatum",  v:`<span style="color:${o.fixtermin?"#991B1B":"#111"};font-weight:600">${fmtDate(o.lieferdatum)}</span>`},
+    {l:"Format",       v:esc(o.mengeFormat)},
+    {l:"Material",     v:matBadge(o.material)},
+    {l:"Druckdaten",   v:ddBadge(o.druckdaten)},
+
+    ...(o.auftragsnr ? [{l:"Auftragsnr.",  v:`<span style="font-family:monospace;font-size:12px;color:#D4006A;background:#FFF0F7;padding:2px 7px;border-radius:3px">${esc(o.auftragsnr)}</span>`}] : []),
+    ...(o.dateipfad  ? [{l:"Dateipfad",    v:`<span style="font-family:monospace;font-size:11px;color:#374151;word-break:break-all">${esc(o.dateipfad)}</span>`}]  : []),
+  ];
+  document.getElementById("detail-info-grid").innerHTML = infos.map(i =>
+    `<div class="info-item"><div class="info-lbl">${i.l}</div><div class="info-val">${i.v}</div></div>`
+  ).join("");
+
+  document.getElementById("detail-konf").innerHTML = [["Oben","oben"],["Unten","unten"],["Links","links"],["Rechts","rechts"]].map(([lbl,key])=>
+    `<tr><td class="kl">${lbl}</td><td class="kv">${esc(o.konfektion[key]||"—")}</td></tr>`
+  ).join("");
+
+  const ns = document.getElementById("detail-notes-section");
+  if (o.notizen) { ns.classList.remove("hidden"); document.getElementById("detail-notes").textContent = o.notizen; }
+  else ns.classList.add("hidden");
+
+  const si = STATUS_LIST.indexOf(o.status);
+  const nextStat = si < STATUS_LIST.length-1 ? STATUS_LIST[si+1] : null;
+  document.getElementById("detail-actions").innerHTML = `
+    <div>${nextStat
+      ? `<button class="btn btn-primary" onclick="advanceStatus('${o.id}','${nextStat}')">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          Weiter: ${esc(nextStat)}</button>`
+      : `<span style="font-size:12px;color:#9CA3AF">Auftrag abgeschlossen</span>`
+    }</div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-secondary" onclick="openEditFromDetail()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#374151" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        Bearbeiten
+      </button>
+      <button class="btn btn-danger" onclick="askDeleteFromDetail('${o.id}')">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#991B1B" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg>
+        Löschen
+      </button>
+    </div>`;
+
+  document.getElementById("detail-overlay").classList.remove("hidden");
+}
+
+function closeDetail() { document.getElementById("detail-overlay").classList.add("hidden"); detailId = null; }
+function closeDetailIfBg(e) { if (e.target === e.currentTarget) closeDetail(); }
+function advanceStatus(id, ns) {
+  const o = orders.find(x => x.id === id);
+  if (!o) return;
+  if (ns === "Abgeschlossen") {
+    o.status = "Abgeschlossen";
+    archivedOrders.unshift({...o, archivedAt: new Date().toISOString().slice(0,10)});
+    orders = orders.filter(x => x.id !== id);
+    closeDetail();
+  } else {
+    o.status = ns;
+    if (detailId === id) openDetail(id);
+  }
+  renderStatusNav(); renderStats(); applyFilters();
+  if (currentTab === "kalender") renderCalendar();
+  if (currentTab === "archiv") renderArchiv();
+}
+function openEditFromDetail() { const id = detailId; closeDetail(); openEditForm(id); }
+function askDeleteFromDetail(id) { closeDetail(); askDelete(id); }
+
+// ── FORM ───────────────────────────────────────────────────────────────────────
+function populateKonfSelects(vals) {
+  ["oben","unten","links","rechts"].forEach(k => {
+    const sel = document.getElementById("f-k-"+k);
+    sel.innerHTML = KONF_OPTS.map(o => `<option${o===(vals&&vals[k])?" selected":""}>${esc(o)}</option>`).join("");
+  });
+}
+function updateMachineHint() {}
+function validateForm() {
+  document.getElementById("form-save-btn").disabled = !(
+    document.getElementById("f-customer").value.trim() &&
+    document.getElementById("f-format").value.trim()
+  );
+}
+
+function openNewForm() {
+  editingId = null;
+  document.getElementById("form-title").textContent = "Neuer Auftrag";
+  document.getElementById("form-id-sub").textContent = "";
+  document.getElementById("f-customer").value = "";
+  document.getElementById("f-format").value = "";
+  document.getElementById("f-auftragsnr").value = "";
+  document.getElementById("f-dateipfad").value = "";
+  document.getElementById("f-start").value = new Date().toISOString().slice(0,10);
+  document.getElementById("f-liefer").value = "";
+  document.getElementById("f-fix").checked = false;
+  document.getElementById("f-material").value = "Dekotex Subil";
+  document.getElementById("f-status").value = "Undefiniert";
+  document.getElementById("f-druckdaten").value = "Ausstehend";
+
+  document.getElementById("f-notizen").value = "";
+  populateKonfSelects(null);
+  const btn = document.getElementById("form-save-btn");
+  btn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg> Auftrag erstellen`;
+  btn.disabled = true;
+  document.getElementById("form-overlay").classList.remove("hidden");
+}
+
+function openEditForm(id) {
+  const o = orders.find(x => x.id === id);
+  if (!o) return;
+  editingId = id;
+  document.getElementById("form-title").textContent = "Auftrag bearbeiten";
+  document.getElementById("form-id-sub").textContent = o.id;
+  document.getElementById("f-customer").value = o.customer;
+  document.getElementById("f-format").value   = o.mengeFormat;
+  document.getElementById("f-auftragsnr").value = o.auftragsnr || "";
+  document.getElementById("f-dateipfad").value  = o.dateipfad  || "";
+  document.getElementById("f-start").value    = o.startDate;
+  document.getElementById("f-liefer").value   = o.lieferdatum;
+  document.getElementById("f-fix").checked    = o.fixtermin;
+  document.getElementById("f-material").value = o.material;
+  document.getElementById("f-status").value   = o.status;
+  document.getElementById("f-druckdaten").value = o.druckdaten;
+
+  document.getElementById("f-notizen").value  = o.notizen || "";
+  populateKonfSelects(o.konfektion);
+  const btn = document.getElementById("form-save-btn");
+  btn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Änderungen speichern`;
+  btn.disabled = false;
+  document.getElementById("form-overlay").classList.remove("hidden");
+}
+
+function closeForm() { document.getElementById("form-overlay").classList.add("hidden"); editingId = null; }
+
+function saveForm() {
+  const customer = document.getElementById("f-customer").value.trim();
+  const format   = document.getElementById("f-format").value.trim();
+  const liefer   = document.getElementById("f-liefer").value;
+  if (!customer || !format) return;
+
+  const data = {
+    customer, mengeFormat: format,
+    auftragsnr: document.getElementById("f-auftragsnr").value.trim(),
+    dateipfad:  document.getElementById("f-dateipfad").value.trim(),
+    startDate:  document.getElementById("f-start").value,
+    lieferdatum: liefer,
+    fixtermin:  document.getElementById("f-fix").checked,
+    material:   document.getElementById("f-material").value,
+    status:     document.getElementById("f-status").value,
+    druckdaten: document.getElementById("f-druckdaten").value,
+
+    notizen:    document.getElementById("f-notizen").value.trim(),
+    konfektion: {
+      oben:   document.getElementById("f-k-oben").value,
+      unten:  document.getElementById("f-k-unten").value,
+      links:  document.getElementById("f-k-links").value,
+      rechts: document.getElementById("f-k-rechts").value,
+    }
+  };
+
+  if (editingId) {
+    const idx = orders.findIndex(x => x.id === editingId);
+    orders[idx] = {...orders[idx], ...data};
+  } else {
+    orders.unshift({id:`AU-2024-0${nextNum++}`, ...data});
+  }
+
+  closeForm();
+  renderStatusNav(); renderStats(); applyFilters();
+  if (currentTab === "kalender") renderCalendar();
+}
+
+// ── DELETE ─────────────────────────────────────────────────────────────────────
+function askDelete(id) {
+  document.getElementById("confirm-msg").innerHTML = `Auftrag <strong>${esc(id)}</strong> wird unwiderruflich gelöscht. Fortfahren?`;
+  document.getElementById("confirm-ok-btn").onclick = () => {
+    orders = orders.filter(x => x.id !== id);
+    closeConfirm();
+    renderStatusNav(); renderStats(); applyFilters();
+    if (currentTab === "kalender") renderCalendar();
+  };
+  document.getElementById("confirm-overlay").classList.remove("hidden");
+}
+function closeConfirm() { document.getElementById("confirm-overlay").classList.add("hidden"); }
+
+// ── ARCHIV ────────────────────────────────────────────────────────────────────
+function renderArchiv() {
+  const tbody  = document.getElementById("archiv-tbody");
+  const footer = document.getElementById("archiv-footer");
+  const count  = document.getElementById("archiv-count");
+  const navCnt = document.getElementById("nav-archiv-cnt");
+  if (navCnt) navCnt.textContent = archivedOrders.length;
+  count.textContent = archivedOrders.length + " abgeschlossene Aufträge";
+  footer.textContent = archivedOrders.length + " Einträge im Archiv";
+  if (!archivedOrders.length) {
+    tbody.innerHTML = `<tr><td colspan="7" style="padding:48px;text-align:center;color:#9CA3AF;font-size:14px;">Keine archivierten Aufträge.</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = archivedOrders.map(o => `
+    <tr style="background:#F9FAFB;opacity:0.85;">
+      <td><span class="td-id">${esc(o.id)}</span>${o.auftragsnr?` <span style="font-family:monospace;font-size:10px;color:#9CA3AF">${esc(o.auftragsnr)}</span>`:""}</td>
+      <td><span class="td-date">${fmtShort(o.archivedAt)}</span></td>
+      <td><span class="td-customer">${esc(o.customer)}</span></td>
+      <td>${matBadge(o.material)}</td>
+      <td><span class="td-fmt">${esc(o.mengeFormat)}</span></td>
+      <td><span style="font-size:12px;color:#6B7280">${fmtShort(o.lieferdatum)}</span></td>
+      <td style="text-align:right" onclick="event.stopPropagation()">
+        <button class="act-btn act-edit" title="Wiederherstellen" onclick="restoreFromArchiv('${o.id}')" style="border-color:#D1FAE5">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#065F46" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 109-9 9.75 9.75 0 00-6.74 2.74L3 8M3 3v5h5"/></svg>
+        </button>
+        <button class="act-btn act-del" title="Endgültig löschen" onclick="deleteFromArchiv('${o.id}')">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#DC2626" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg>
+        </button>
+      </td>
+    </tr>`).join("");
+}
+
+function restoreFromArchiv(id) {
+  const idx = archivedOrders.findIndex(x => x.id === id);
+  if (idx === -1) return;
+  const o = {...archivedOrders[idx], status:"In Planung"};
+  delete o.archivedAt;
+  orders.unshift(o);
+  archivedOrders.splice(idx, 1);
+  renderArchiv();
+  renderStatusNav();
+  renderStats();
+  applyFilters();
+}
+
+function deleteFromArchiv(id) {
+  archivedOrders = archivedOrders.filter(x => x.id !== id);
+  renderArchiv();
+  const navCnt = document.getElementById("nav-archiv-cnt");
+  if (navCnt) navCnt.textContent = archivedOrders.length;
+}
+
+function clearArchiv() {
+  if (!archivedOrders.length) return;
+  if (!confirm("Alle " + archivedOrders.length + " Archiv-Einträge endgültig löschen?")) return;
+  archivedOrders = [];
+  renderArchiv();
+  const navCnt = document.getElementById("nav-archiv-cnt");
+  if (navCnt) navCnt.textContent = 0;
+}
+
+// ── INIT ───────────────────────────────────────────────────────────────────────
+// Move pre-existing "Abgeschlossen" orders to archive on load
+orders = orders.filter(o => {
+  if (o.status === "Abgeschlossen") {
+    archivedOrders.push({...o, archivedAt: o.lieferdatum || o.startDate});
+    return false;
+  }
+  return true;
+});
+initCal();
+renderStatusNav();
+renderStats();
+applyFilters();
+</script>
+
+
+</body></html>
