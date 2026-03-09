@@ -1,3 +1,7 @@
+cd /Users/oguzakkus/path/to/print-flow
+git add index.html
+git commit -m "Add PrintFlow application"
+git push origin main
 <!DOCTYPE html>
 <html lang="de">
 <head>
